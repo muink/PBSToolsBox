@@ -1,0 +1,6 @@
+﻿*.ini
+*.lnk
+
+Bin/
+Core/template/
+Menu/
