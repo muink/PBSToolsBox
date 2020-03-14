@@ -1,3 +1,7 @@
+:: PBSToolsBox
+:: Portable System ToolsBox For Windows
+:: Author: muink
+
 @echo off
 if "%~1" == "" exit
 

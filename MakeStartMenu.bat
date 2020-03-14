@@ -1,3 +1,7 @@
+:: PBSToolsBox
+:: Portable System ToolsBox For Windows
+:: Author: muink
+
 @echo off
 %~1 mshta vbscript:createobject("shell.application").shellexecute("%~f0","::","","runas",1)(window.close)&exit
 
