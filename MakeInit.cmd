@@ -13,13 +13,13 @@ set "LKGEN=%~dp0Menu\LinkGen"
 
 set SYS=System
 set USER=User
-set "KEY=Disk=8,Down=122,Edit=259,Hard=21,Net=13,Other=23,Safe=47,Shell=24,Store=258,Sys=188,Virtual=11"
+set "KEY=Disk=8;Down=122;Edit=259;Hard=21;Net=13;Other=23;Safe=47;Shell=24;Store=258;Sys=imageres.dll:56;Virtual=11"
 
 :--bin--
 md "%BIN%" 2>nul || goto :--target--
 setlocal enabledelayedexpansion
 :--bin--#loop
-for /f "tokens=1* delims=," %%i in ("!KEY!") do (
+for /f "tokens=1* delims=;" %%i in ("!KEY!") do (
 	for /f "tokens=1,2 delims==" %%k in ("%%i") do call:[MKKEY] "%BIN%" %%k %%l
 	set "KEY=%%j"
 	goto :--bin--#loop
@@ -28,10 +28,10 @@ endlocal
 
 :--target--
 md "%TARGET%" 2>nul && (
-	call:[WTini] "%TARGET%" 300
-	md "%TARGET%\%SYS%"  2>nul && call:[WTini] "%TARGET%\%SYS%"  298
-	md "%TARGET%\%USER%" 2>nul && call:[WTini] "%TARGET%\%USER%" 298
-	md "%LKGEN%" 2>nul && call:[WTini] "%LKGEN%" 263
+	call:[WTini] "%TARGET%" "" 300
+	md "%TARGET%\%SYS%"  2>nul && call:[WTini] "%TARGET%\%SYS%"  "" 298
+	md "%TARGET%\%USER%" 2>nul && call:[WTini] "%TARGET%\%USER%" "" 298
+	md "%LKGEN%" 2>nul && call:[WTini] "%LKGEN%" "" 263
 )
 call:[CheckKEY] "%TARGET%\%SYS%"
 call:[CheckKEY] "%TARGET%\%USER%"
@@ -48,9 +48,11 @@ popd & goto :eof
 
 :[WTini]
 setlocal enabledelayedexpansion
+set "icolib=%~2"
+if "%icolib%" == "" set "icolib=SHELL32.dll"
 set "pa=%~1"
 (echo.[.ShellClassInfo]
-echo.IconResource=%SystemRoot%\system32\SHELL32.dll,%~2)>"%pa%\desktop.ini"
+echo.IconResource=%SystemRoot%\system32\%icolib%,%~3)>"%pa%\desktop.ini"
 attrib +r "%pa%"
 attrib +s +h "%pa%\desktop.ini"
 endlocal
@@ -61,8 +63,10 @@ setlocal enabledelayedexpansion
 set "pa=%~1\%2Tools"
 set "key=%2"
 set "value=%3"
+set "value2=%value::=" "%"
+if "%value%" == "%value2%" set value2=" "%value%
 md "%pa%" 2>nul
-call:[WTini] "%pa%" %value%
+call:[WTini] "%pa%" "%value2%"
 endlocal
 goto :eof
 
