@@ -20,7 +20,7 @@ md "%BIN%" 2>nul || goto :--target--
 setlocal enabledelayedexpansion
 :--bin--#loop
 for /f "tokens=1* delims=;" %%i in ("!KEY!") do (
-	for /f "tokens=1,2 delims==" %%k in ("%%i") do call:[MKKEY] "%BIN%" %%k %%l
+	for /f "tokens=1,2 delims==" %%k in ("%%i") do call:[MKKEY] "%BIN%" "%%~k" "%%~l"
 	set "KEY=%%j"
 	goto :--bin--#loop
 )
@@ -60,9 +60,9 @@ goto :eof
 
 :[MKKEY]
 setlocal enabledelayedexpansion
-set "pa=%~1\%2Tools"
-set "key=%2"
-set "value=%3"
+set "pa=%~1\%~2Tools"
+set "key=%~2"
+set "value=%~3"
 set "value2=%value::=" "%"
 if "%value%" == "%value2%" set value2=" "%value%
 md "%pa%" 2>nul
