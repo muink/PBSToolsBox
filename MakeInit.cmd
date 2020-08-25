@@ -13,7 +13,7 @@ set "LKGEN=%~dp0Menu\LinkGen"
 
 set SYS=System
 set USER=User
-set "KEY=Disk=8;Down=122;Edit=259;Hard=21;Media=301;Net=13;Other=23;Safe=47;Shell=24;Store=258;Sys=imageres.dll:56;Virtual=11"
+set "KEY=Disk=8;Down=122;Edit=259;Hard=21;Media=324;Net=13;Other=23;Safe=47;Shell=24;Store=258;Sys=imageres.dll:56;Virtual=11"
 
 :--bin--
 md "%BIN%" 2>nul || goto :--target--
@@ -28,9 +28,9 @@ endlocal
 
 :--target--
 md "%TARGET%" 2>nul && (
-	call:[WTini] "%TARGET%" "" 300
-	md "%TARGET%\%SYS%"  2>nul && call:[WTini] "%TARGET%\%SYS%"  "" 298
-	md "%TARGET%\%USER%" 2>nul && call:[WTini] "%TARGET%\%USER%" "" 298
+	call:[WTini] "%TARGET%" "" 323
+	md "%TARGET%\%SYS%"  2>nul && call:[WTini] "%TARGET%\%SYS%"  "" 321
+	md "%TARGET%\%USER%" 2>nul && call:[WTini] "%TARGET%\%USER%" "" 321
 	md "%LKGEN%" 2>nul && call:[WTini] "%LKGEN%" "" 263
 )
 call:[CheckKEY] "%TARGET%\%SYS%"
