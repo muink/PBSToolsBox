@@ -11,9 +11,15 @@ set "BIN=%~dp0Bin"
 set "TARGET=%~dp0Menu"
 set "LKGEN=%~dp0Menu\LinkGen"
 
+set ICOF=icon.ico
 set SYS=System
 set USER=User
 set "KEY=Disk=8;Down=122;Edit=259;Hard=21;Media=324;Net=13;Other=23;Safe=47;Shell=24;Store=258;Sys=imageres.dll:56;Virtual=11"
+
+:--icon--
+if not exist desktop.ini call:[WTini] "%cd%" "?%ICOF%" "0"
+find "%ICOF%" desktop.ini >nul 2>nul || call:[WTini] "%cd%" "?%ICOF%" "0"
+attrib +s +h "%ICOF%" 2>nul
 
 :--bin--
 md "%BIN%" 2>nul || goto :--target--
@@ -50,9 +56,12 @@ popd & goto :eof
 setlocal enabledelayedexpansion
 set "icolib=%~2"
 if "%icolib%" == "" set "icolib=SHELL32.dll"
+set "icores=%%SystemRoot%%\system32\%icolib%"
+if "%icolib:~0,1%" == "?" set "icores=%icolib:~1%"
 set "pa=%~1"
+del /f /q /a "%pa%\desktop.ini" 2>nul
 (echo.[.ShellClassInfo]
-echo.IconResource=%%SystemRoot%%\system32\%icolib%,%~3)>"%pa%\desktop.ini"
+echo.IconResource=%icores%,%~3)>"%pa%\desktop.ini"
 attrib +r "%pa%"
 attrib +s +h "%pa%\desktop.ini"
 endlocal
