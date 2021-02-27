@@ -15,7 +15,7 @@ if "%processor_architecture%" == "x86" (
 	set "Paa=%X86Paa%"
 	if exist "%windir%\SysWOW64" "%windir%\SysNative\cmd" /c %~f0 & exit
 )
-set "path=%path%;%Paa%"
+if "%path:~-1%" == ";" (set "path=%path%%Paa%") else (set "path=%path%;%Paa%")
 
 :main
 set PKG=template
