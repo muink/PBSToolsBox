@@ -7,36 +7,19 @@
 
 :Init
 cd /d %~dp0
-call .\MakeInit.cmd "%~dp0"
 set NAME=PBSToolsBox
-set "LINKSYSPATH=%AllUsersProfile%\Microsoft\Windows\Start Menu\Programs"
-set "LINKUSERPATH=%AppData%\Microsoft\Windows\Start Menu\Programs"
-
 set FORSYS=1
 set FORUSER=<nul
-
-:Create_New_Menu_Links
-if defined FORSYS (
-	rd /s /q "%LKGEN%\%SYS%" >nul 2>nul & md "%LKGEN%\%SYS%" 2>nul && attrib +r "%LKGEN%\%SYS%"
-	dir /a:l /b "%LINKSYSPATH%" | find "%NAME%" >nul 2>nul && rd /q "%LINKSYSPATH%\%NAME%" 2>nul
-	mklink /d "%LINKSYSPATH%\%NAME%" "%LKGEN%\%SYS%" 2>nul && attrib +r "%LINKSYSPATH%\%NAME%"
-)
-if defined FORUSER (
-	rd /s /q "%LKGEN%\%USER%">nul 2>nul & md "%LKGEN%\%USER%" 2>nul && attrib +r "%LKGEN%\%USER%"
-	dir /a:l /b "%LINKUSERPATH%" | find "%NAME%" >nul 2>nul && rd /q "%LINKUSERPATH%\%NAME%" 2>nul
-	mklink /d "%LINKUSERPATH%\%NAME%" "%LKGEN%\%USER%" 2>nul && attrib +r "%LINKUSERPATH%\%NAME%"
-)
+call .\MakeInit.cmd "%~dp0"
 
 :Gen_Menu_List
 if defined FORSYS (
-	call:[GenDir]      "%TARGET%\%SYS%" "%LKGEN%\%SYS%"
-	call:[GenLink]     "%TARGET%\%SYS%" "%LKGEN%\%SYS%"
-	call:[GenShortcut] "%TARGET%\%SYS%" "%LKGEN%\%SYS%"
+	call:[GenDir]      "%TARGET%\%SYS%" "%LINKSYSPATH%\%NAME%"
+	call:[GenShortcut] "%TARGET%\%SYS%" "%LINKSYSPATH%\%NAME%"
 )
 if defined FORUSER (
-	call:[GenDir]      "%TARGET%\%USER%" "%LKGEN%\%USER%"
-	call:[GenLink]     "%TARGET%\%USER%" "%LKGEN%\%USER%"
-	call:[GenShortcut] "%TARGET%\%USER%" "%LKGEN%\%USER%"
+	call:[GenDir]      "%TARGET%\%USER%" "%LINKUSERPATH%\%NAME%"
+	call:[GenShortcut] "%TARGET%\%USER%" "%LINKUSERPATH%\%NAME%"
 )
 
 :Gen_UOSMenu_Shortcut
@@ -51,26 +34,14 @@ setlocal enabledelayedexpansion
 set "target=%~1"
 set "linkgen=%~2"
 set "dir="
+set "file="
 pushd "%target%"
 for /f "delims=" %%i in ('dir /a:d /b /s 2^>nul') do (
 	set "dir=%%~i"
+	set "file=!dir!\desktop.ini"
 	md "%linkgen%!dir:%target%=!" 2>nul
+	xcopy /h /y "!file!" "%linkgen%!file:%target%=!\.." >nul 2>nul
 	attrib +r "%linkgen%!dir:%target%=!"
-)
-popd & endlocal
-goto :eof
-
-:[GenLink]
-setlocal enabledelayedexpansion
-set link=hardlink
-set "target=%~1"
-set "linkgen=%~2"
-set "file="
-pushd "%target%"
-for /f "delims=" %%i in ('dir /a-d /b /s desktop.ini 2^>nul') do (
-	set "file=%%~i"
-	if %link% == hardlink mklink /h "%linkgen%!file:%target%=!" "!file!" >nul 2>nul
-	if %link% == symlink  mklink    "%linkgen%!file:%target%=!" "!file!" >nul 2>nul
 )
 popd & endlocal
 goto :eof
@@ -86,8 +57,8 @@ set "orig="
 pushd "%target%"
 for /f "delims=" %%i in ('dir /a:l /b /s 2^>nul') do (
 	set "symlnk=%%~i"
-	set "symlnkdir=%%~dpsi"
-	set "symlnkname=%%~nsi"
+	set "symlnkdir=%%~dpi"
+	set "symlnkname=%%~ni"
 	for /f "tokens=2 delims=[]" %%i in ('dir /a:l /x "!symlnk!" ^| find "!symlnkname!" 2^>nul') do set "orig=!symlnkdir!%%~i"
 	call:[MKlnk] "%linkgen%!symlnk:%target%=!" "!symlnk!" "" "!orig!" "!orig!"
 )

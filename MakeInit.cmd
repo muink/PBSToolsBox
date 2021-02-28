@@ -10,6 +10,8 @@ pushd %nodedir%
 :--init--
 set "BIN=%nodedir%Bin"
 set "TARGET=%nodedir%Menu"
+set "LINKSYSPATH=%AllUsersProfile%\Microsoft\Windows\Start Menu\Programs"
+set "LINKUSERPATH=%AppData%\Microsoft\Windows\Start Menu\Programs"
 
 set ICOF=icon.ico
 set SYS=System
@@ -20,6 +22,42 @@ set "KEY=Disk=8;Down=122;Edit=259;Hard=21;Media=324;Net=13;Other=23;Safe=47;Shel
 if not exist desktop.ini call:[WTini] "%cd%" "?%ICOF%" "0"
 find "%ICOF%" desktop.ini >nul 2>nul || call:[WTini] "%cd%" "?%ICOF%" "0"
 attrib +s +h "%ICOF%" 2>nul
+
+:--startmenu--
+if defined FORSYS (
+	if exist "%LINKSYSPATH%\%NAME%" (
+		find "%NAME%.ico" "%LINKSYSPATH%\%NAME%\desktop.ini" >nul 2>nul || (
+			::error
+			echo."%LINKSYSPATH%\%NAME%" is exist, Please continue after deleting it manually
+			ping -n 6 127.0.0.1 >nul
+			explorer "%LINKSYSPATH%\%NAME%\.."
+			set /p _=Press any key to confirm to continue x3...
+			set /p _=Press any key to confirm to continue x2...
+			set /p _=Press any key to confirm to continue x1...
+	))
+	::create
+	rd /s /q "%LINKSYSPATH%\%NAME%" >nul 2>nul & md "%LINKSYSPATH%\%NAME%" 2>nul && attrib +r "%LINKSYSPATH%\%NAME%"
+	del /f /q /a "%LINKSYSPATH%\%NAME%\%NAME%.ico" 2>nul
+	null>"%LINKSYSPATH%\%NAME%\%NAME%.ico" 2>nul & xcopy /h /y "%ICOF%" "%LINKSYSPATH%\%NAME%\%NAME%.ico"
+	call:[WTini] "%LINKSYSPATH%\%NAME%" "?%NAME%.ico" "0"
+)
+if defined FORUSER (
+	if exist "%LINKUSERPATH%\%NAME%" (
+		find "%NAME%.ico" "%LINKUSERPATH%\%NAME%\desktop.ini" >nul 2>nul || (
+			::error
+			echo."%LINKUSERPATH%\%NAME%" is exist, Please continue after deleting it manually
+			ping -n 6 127.0.0.1 >nul
+			explorer "%LINKUSERPATH%\%NAME%\.."
+			set /p _=Press any key to confirm to continue x3...
+			set /p _=Press any key to confirm to continue x2...
+			set /p _=Press any key to confirm to continue x1...
+	))
+	::create
+	rd /s /q "%LINKUSERPATH%\%NAME%" >nul 2>nul & md "%LINKUSERPATH%\%NAME%" 2>nul && attrib +r "%LINKUSERPATH%\%NAME%"
+	del /f /q /a "%LINKUSERPATH%\%NAME%\%NAME%.ico" 2>nul
+	null>"%LINKUSERPATH%\%NAME%\%NAME%.ico" 2>nul & xcopy /h /y "%ICOF%" "%LINKUSERPATH%\%NAME%\%NAME%.ico"
+	call:[WTini] "%LINKUSERPATH%\%NAME%" "?%NAME%.ico" "0"
+)
 
 :--bin--
 md "%BIN%" 2>nul || goto :--target--
