@@ -5,11 +5,11 @@
 @echo off
 if "%~1" == "" exit
 
-pushd %~1
+set "nodedir=%~1"
+pushd %nodedir%
 :--init--
-set "BIN=%~dp0Bin"
-set "TARGET=%~dp0Menu"
-set "LKGEN=%~dp0Menu\LinkGen"
+set "BIN=%nodedir%Bin"
+set "TARGET=%nodedir%Menu"
 
 set ICOF=icon.ico
 set SYS=System
@@ -37,14 +37,13 @@ md "%TARGET%" 2>nul && (
 	call:[WTini] "%TARGET%" "" 323
 	md "%TARGET%\%SYS%"  2>nul && call:[WTini] "%TARGET%\%SYS%"  "" 321
 	md "%TARGET%\%USER%" 2>nul && call:[WTini] "%TARGET%\%USER%" "" 321
-	md "%LKGEN%" 2>nul && call:[WTini] "%LKGEN%" "" 263
 )
 call:[CheckKEY] "%TARGET%\%SYS%"
 call:[CheckKEY] "%TARGET%\%USER%"
 
 :--template--
 if exist "%~dp0One-off_Run.cmd" (
-	call "%~dp0One-off_Run.cmd" "%~1"
+	call "%~dp0One-off_Run.cmd" "%nodedir%"
 	del /f /q "%~dp0One-off_Run.cmd" >nul 2>nul
 )
 
