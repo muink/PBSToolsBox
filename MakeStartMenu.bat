@@ -60,7 +60,7 @@ for /f "delims=" %%i in ('dir /a:l /b /s 2^>nul') do (
 	set "symlnkdir=%%~dpi"
 	set "symlnkname=%%~ni"
 	for /f "tokens=2 delims=[]" %%i in ('dir /a:l /x "!symlnk!" ^| find "!symlnkname!" 2^>nul') do set "orig=!symlnkdir!%%~i"
-	call:[MKlnk] "%linkgen%!symlnk:%target%=!" "!symlnk!" "" "!orig!" "!orig!"
+	call:[MKlnk] "%linkgen%!symlnk:%target%=!" "!symlnk!" " " "!orig!" "!orig!"
 )
 popd & endlocal
 goto :eof
@@ -72,7 +72,7 @@ set "symlnk=%~2"
 set "args=%~3"
 set "workdir=%~dp4"
 set "icon=%~fs5,0"
-mshta VBScript:Execute("Set a=CreateObject(""WScript.Shell""):Set b=a.CreateShortcut(""%shortcut%""):b.TargetPath=""%symlnk%"":b.WorkingDirectory=""%workdir%"":b.IconLocation=""%icon%"":b.Save:close")
+cscript //nologo "%~dp0CreateShortcut.vbs"
 goto :eof
 
 
@@ -108,3 +108,5 @@ mshta VBScript:Execute("Set a=CreateObject(""WScript.Shell""):Set b=a.CreateShor
 
 [批处理如何在桌面创建目标程序带参数的快捷方式？](http://www.bathome.net/thread-33196-1-1.html)  
 [批处理创建快捷方式](https://peach.oschina.io/post/%E6%89%B9%E5%A4%84%E7%90%86_%E5%88%9B%E5%BB%BA%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F/)  
+[How to make a shortcut from CMD?](https://superuser.com/questions/392061/how-to-make-a-shortcut-from-cmd/392066)  
+[批处理调用vbs并传递参数给vbs双引号无法传递](http://www.bathome.net/thread-15642-1-1.html)  
